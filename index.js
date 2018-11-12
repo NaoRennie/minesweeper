@@ -4,13 +4,20 @@ const app = express();
 // const board_page= fs.readFileSync('./baord','utf8');
 const width = 10;
 const height = 10;
+const bomCount= 10;
 let board = [];
+let board1 =[];
+let openedArray=[];
+let xboard ;
+let yboard ;
+let bom = [];
+
 
 
 
 // console.log(board[2][0]);
 //ブロックをおく
-function draw(){
+
 
  for (let y=0; y<height; y++){
      let arr = []    
@@ -22,8 +29,40 @@ function draw(){
      }    
      board[y] = arr;   
  }
-}
-draw();
+
+ while(bom.length<bomCount){
+     console.log('cccc');
+     let bomx = Math.floor(Math.random()*width);
+     let bomy = Math.floor(Math.random()*height);
+     if (bom.length===0){
+         bom.push({x:bomx,y:bomy});  
+         console.log('bbbb');
+     }else{
+         for(q=0;q<bom.length;q++){
+             let bomx1;
+             let bomy1;
+             bomx1=bom[q]['x'];
+             bomy1=bom[q]['y'];
+       
+              
+             if((bomx!==bomx1&&bomy!==bomy1)||(bomx===bomx1&&bomy!==bomy1)||(bomx!==bomx1&&bomy===bomy1)){
+               bom.push({x:bomx,y:bomy}); 
+               console.log('???????????');
+             }else if ((bomx===bomx1&&bomy===bomy1)){
+               console.log('%%%%%%%%%%%%%');
+             }
+
+         }
+   
+
+     }
+ }
+
+     
+ 
+ console.log(bom);
+ 
+
 
 
 
@@ -43,41 +82,63 @@ draw();
 
 
 app.get('/board',(req,res)=>{
+    console.log(req);
+
     let a = req.query;
-    let xboard = a.x;
-    let yboard = a.y;
+    xboard = a.x;
+    yboard = a.y;
+    openedArray.push({x:xboard,y:yboard});
     // let f= board[c][b];
     let d = {
         hasBom: false,
         opened: true,
       }
     board[yboard][xboard] = d;
-    res.send(board);
     
-    let board1 = board;
+    for (let y=0; y<height; y++){
+        let arr = []    
+        for(let x=0; x<width; x++){
+            arr[x] = {
+               
+               opened: false,
+             };
+        }    
+        board1[y] = arr;   
+    }
+    
     let e= {
         opened: true,
       }
     board1[yboard][xboard] = e;
+    for(i =0; i <openedArray.length; i++){
+       let a = openedArray[i]['x'];
+       let b = openedArray[i]['y'];
+       console.log(a);
+       let d= {
+        opened: true,
+      }
+
+       board1[a][b]=d;  
+    }
 
 
     res.json(board1); 
-    // open();
+    console.log('ここから');
+    console.log(board);
+    console.log(openedArray);
+    console.log('ここまで');
+
+   
     
 });
 
 
 
-
-
-
-
-
- 
-
-
 app.listen(8000);
 console.log(board);
+
+
+
 
 
 
