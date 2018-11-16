@@ -1,15 +1,32 @@
 const express = require('express');
 const app = express();
 app.use(express.static('static')); 
+//static の中身がやっていること
+// const fs = require('fs');
+// const path = require('path');
+// const htmlPath = path.join()(__dirname,'./static/index.html');//__dirnameは組み込まれてる変数
+// console.log(htmlPath);//これで中身を見ている
+// const html= fs.readFileSync(htmlPath,'utf8');
+// console.log(html);//これでhtml の中身を見る
+
+// app.get('/',(req,res)=>){
+//     res.send(html);
+//         // ここにhtmlを入れると画面に表示させる   
+// }
+// const fs = require('fs');
+// const board_page= fs.readFileSync('./baord','utf8');
 const width = 10;
 const height = 10;
 const bomCount= 10;
 let board = [];
-let board1 = [];
+let board1=[];
+let openedArray=[];
 let xboard ;
 let yboard ;
 let userName ;
 let bom = [];
+let bomLocations=[];
+let bomNumber =0;
 let directions = [
     [0,-1],
     [1,0],
@@ -79,34 +96,73 @@ let directions = [
 
 
 app.get('/board',(req,res)=>{
-
-    // if (xboard==true){
     //コマが空いた時の処理
-     xboard = req.query.x;
-     yboard = req.query.y;
-     userName = req.query.user;
+     let a = req.query;
+     userName = a.user;
+     xboard = a.x;
+     yboard = a.y;
      bomNumber = 0;
+     openedArray.push({x:xboard,y:yboard});
      if(board[yboard][xboard]['hasBom']===true){
          for(i=0; i<bom.length; i++){
-             board[bom[i]['y']][bom[i]['x']]={ 
+             board1[bom[i]['y']][bom[i]['x']]={ 
+                // 上のミスで誘爆した
+                exploded: true,
+                opened: false, // 閉じたまま
+             }
+            board[bom[i]['y']][bom[i]['x']]={ 
                 // 上のミスで誘爆した
                 exploded: true,
                 opened: false, // 閉じたまま
              }
          }
+    
+         board1[yboard][xboard]={
+         // アクセスした場所に爆弾があった
+         exploded: true,
+         opened: true, // 開いている
+         user: userName,
+         }
          board[yboard][xboard]={
          // アクセスした場所に爆弾があった
          exploded: true,
          opened: true, // 開いている
-         user:userName,
+         user:userNmae,
          }
+    
      }else{
+
          let d = {
             hasBom: false,
             opened: true,
-            user: userName,
          }
          board[yboard][xboard] = d;
+         //board のコピーを作る(board1)
+        //  board1 = board;
+         
+         for (let y=0; y<height; y++){
+           let arr = []    
+             for(let x=0; x<width; x++){
+                arr[x] = {
+                opened: false,
+                };
+             }    
+            board1[y] = arr;   
+         }
+         let e= {
+           opened: true,
+         }
+         board1[yboard][xboard] = e;
+         for(i =0; i <openedArray.length; i++){
+           let a = openedArray[i]['x'];
+           let b = openedArray[i]['y'];
+           console.log(a);
+             let d= {
+             user: userName,
+             opened: true,
+              }
+          board1[b][a]=d;  
+         }
 
          for(h=0; h<directions.length;h++){
             let n = Number(''+directions[h][0]+'');
@@ -129,50 +185,53 @@ app.get('/board',(req,res)=>{
             }
 
             if (board[o][p]['hasBom']===true){
-                console.log('ここですううう')
-                console.log(board[o][p].bomNumber);
-                if(board[o][p].bomNumber==undefined){
-                    console.log('koko');
-                    let bomNumber = 1;
-                    board[o][p].bomNumber={
-                        bomNumber,   
-                    }
-                }else{
-                    console.log('dayo');
-                let a = Number(board[o][p].bomNumber);
-                let bomNumber = a+1;
-                board[o][p].bomNumber={
-                    bomNumber,  
-                }
-                }
-                console.log('kore');
-                console.log(bomNumber);
-                
+                bomNumber = bomNumber+1; 
             }
 
-       
-        
+         }
+         if(bomNumber>0){
+            for(h=0; h<directions.length;h++){
+                let n = Number(''+directions[h][0]+'');
+                let m = Number(''+directions[h][1]+'');  
+                let x = Number(''+xboard+'');
+                let y= Number(''+yboard+''); 
+
+                
+                let o = y + n;
+                let p = x + m;
+                if (o<0){
+                    o = 0;
+                }
+                if (p<0){
+                    p = 0;
+                }
+                if(o>height){
+                    o = height;
+                }
+                if(p>width){
+                    p = width;
+                }
+                if((xboard!==p)&&(yboard!==o)){
+                 board1[o][p]={ 
+                    number: bomNumber,
+                    opened: true, // 開いている
+                  } 
+                }
                 // bomLocations.push({x:o,y:p,bom:bomNumber})
                  
              }
              
          }
-        
 
-     
-        board1 = JSON.parse(JSON.stringify(board));
-     for (let y=0; y<height; y++){ 
-        for(let x=0; x<width; x++){
-           delete board1[y][x]['hasBom'];
-        }    
-    }
-     
+     }
+    //  var board = JSON.parse(JSON.stringify(baord));
      res.json(board1); 
-     console.log(bom);
+
+     res.send(board1);
      console.log('ここから');
      console.log(board);
+     console.log(openedArray);
      console.log('ここまで');
-     console.log(board1);
      
       
       
@@ -185,8 +244,6 @@ app.get('/board',(req,res)=>{
 
 app.listen(8000);
 console.log(board);
-
-
 
 
 

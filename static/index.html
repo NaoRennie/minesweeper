@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+    </head>
+    <body>
+        <div id="app"> </div>
+        <style>
+            *{
+                margin: 0;
+                padding: 0;
+            }
+            #app{
+                position: fixed;
+                top:50%;
+                left:50%;
+                transform:translate(-50%,-50%);
+            }
+            .row{
+                overflow: hidden;
+            }
+            .opend{
+                background : #fff;
+            }
+            .block{
+                float: left;
+                width: 20px;
+                height: 20px;
+                border: 1px solid #333;
+                background: #ddd;
+            }
+        </style>
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <script>
+         const render = (board) => {
+            // DOMを破棄して再構築
+            $('#app').empty;
+            let html = '';
+            board.forEach((row)=>{
+               html += '<div class = "row">'
+               row.forEach((block)=>{
+                   const blockClass = block.opened ? ' opened' : 'block';
+                   html +=`<div class = "block${block.opened ?' opened':''}"/>`;
+
+               });
+
+               html += '</div>' 
+            });
+
+            $('#app').html(html);
+
+            $('.block').click(function() {
+        // xとyを算出する
+        $.getJSON('/board', {
+            x: x,
+            y: y,
+            user: user,
+        }, render);
+        });
+         };
+        //  setInterval(() => {
+        //   // 0.5秒ごとにサーバーにポーリング
+        //  $.getJSON('/board', render);
+        // }, 500);
+
+        
+
+        </script>
+    </body>
+</html>
