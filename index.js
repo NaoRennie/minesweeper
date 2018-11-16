@@ -6,11 +6,13 @@ const width = 10;
 const height = 10;
 const bomCount= 10;
 let board = [];
-let board1 =[];
+let board1=[];
 let openedArray=[];
 let xboard ;
 let yboard ;
+let userName ;
 let bom = [];
+let bomLocations=[];
 let bomNumber =0;
 let directions = [
     [0,-1],
@@ -42,12 +44,13 @@ let directions = [
  while(bom.length<bomCount){
      let bomx = Math.floor(Math.random()*width);  
      let bomy = Math.floor(Math.random()*height);
+     
      if (bom.length===0){
          bom.push({x:bomx,y:bomy});  
      }
      
      else if(((bom.findIndex(({x}) => x=== bomx)) === -1)&&((bom.findIndex(({y}) => y=== bomy)) === -1)){
-       
+        // ((bom.findIndex(({x}) => x=== bomx)) === -1)&&((bom.findIndex(({y}) => y=== bomy)) === -1)
          bom.push({x:bomx,y:bomy}); 
      }
     for(i=0; i<bom.length; i ++){
@@ -72,8 +75,10 @@ let directions = [
 app.get('/board',(req,res)=>{
     //コマが空いた時の処理
      let a = req.query;
+     userName = a.user;
      xboard = a.x;
      yboard = a.y;
+     bomNumber = 0;
      openedArray.push({x:xboard,y:yboard});
      if(board[yboard][xboard]['hasBom']===true){
          for(i=0; i<bom.length; i++){
@@ -93,11 +98,13 @@ app.get('/board',(req,res)=>{
          // アクセスした場所に爆弾があった
          exploded: true,
          opened: true, // 開いている
+         user: userName,
          }
          board[yboard][xboard]={
          // アクセスした場所に爆弾があった
          exploded: true,
          opened: true, // 開いている
+         user:userNmae,
          }
     
      }else{
@@ -108,6 +115,8 @@ app.get('/board',(req,res)=>{
          }
          board[yboard][xboard] = d;
          //board のコピーを作る(board1)
+        //  board1 = board;
+         
          for (let y=0; y<height; y++){
            let arr = []    
              for(let x=0; x<width; x++){
@@ -126,6 +135,7 @@ app.get('/board',(req,res)=>{
            let b = openedArray[i]['y'];
            console.log(a);
              let d= {
+             user: userName,
              opened: true,
               }
           board1[b][a]=d;  
@@ -136,10 +146,7 @@ app.get('/board',(req,res)=>{
             let m = Number(''+directions[h][1]+'');  
             let x = Number(''+xboard+'');
             let y= Number(''+yboard+''); 
-            console.log('ここから')
-            console.log(n);
             let o = y + n;
-            console.log(o);
             let p = x + m;
             if (o<0){
                 o = 0;
@@ -155,8 +162,6 @@ app.get('/board',(req,res)=>{
             }
 
             if (board[o][p]['hasBom']===true){
-
-                console.log('CCCCCCCCCCCCCCC');
                 bomNumber = bomNumber+1; 
             }
 
@@ -167,7 +172,7 @@ app.get('/board',(req,res)=>{
                 let m = Number(''+directions[h][1]+'');  
                 let x = Number(''+xboard+'');
                 let y= Number(''+yboard+''); 
-                console.log('DDDDD')
+
                 
                 let o = y + n;
                
@@ -184,10 +189,13 @@ app.get('/board',(req,res)=>{
                 if(p>width){
                     p = width;
                 }
+                if((xboard!==p)&&(yboard!==o)){
                 board1[o][p]={ 
                     number: bomNumber,
                     opened: true, // 開いている
                   } 
+                }
+                // bomLocations.push({x:o,y:p,bom:bomNumber})
                  
              }
              
