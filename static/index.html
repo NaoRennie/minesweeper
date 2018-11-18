@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
     </head>
     <body>
-        <div id="app"> </div>
+        <div id="app"></div>
         <style>
             *{
                 margin: 0;
@@ -19,15 +19,18 @@
             .row{
                 overflow: hidden;
             }
-            .opend{
-                background : #fff;
-            }
             .block{
                 float: left;
                 width: 20px;
                 height: 20px;
                 border: 1px solid #333;
                 background: #ddd;
+            }
+            .opened{
+                background :red;
+            }
+            .exploded{
+                background : yellow;
             }
         </style>
         <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
@@ -36,32 +39,43 @@
             // DOMを破棄して再構築
             $('#app').empty;
             let html = '';
-            board.forEach((row)=>{
+             board.forEach((row)=>{
                html += '<div class = "row">'
-               row.forEach((block)=>{
-                   const blockClass = block.opened ? ' opened' : 'block';
-                   html +=`<div class = "block${block.opened ?' opened':''}"/>`;
-
-               });
-
+                 row.forEach((block)=>{
+                   const blockClass = block.opened ? 'opened block' : 'block';
+                   const userName = block.user ? block.user : '';
+                //    const hasBom = block.exploded? 'block exploded' : 'block';
+                    html += `<div class = "${blockClass}">${userName}</div>`;
+                
+                 });
                html += '</div>' 
-            });
+             });
 
             $('#app').html(html);
 
             $('.block').click(function() {
+                let a = $('.block').index(this);
+                let b = String(a);
+                let col = b.slice(-1);
+                let row = Math.floor(a/10);
+                x = col;
+                y = row;
+                user = "tom";
+               
+                
         // xとyを算出する
-        $.getJSON('/board', {
-            x: x,
-            y: y,
-            user: user,
-        }, render);
-        });
-         };
-        //  setInterval(() => {
-        //   // 0.5秒ごとにサーバーにポーリング
-        //  $.getJSON('/board', render);
-        // }, 500);
+             $.getJSON('/board', {
+              x: x,
+              y: y,
+              user: user,
+              
+             }, render);
+         });
+     };
+         setInterval(() => {
+          // 0.5秒ごとにサーバーにポーリング
+         $.getJSON('/board', render);
+        }, 20000);
 
         
 
