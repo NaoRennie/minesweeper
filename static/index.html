@@ -30,7 +30,8 @@
                 background :red;
             }
             .exploded{
-                background : yellow;
+                background-image:url("img.png");
+                background :yellow;
             }
         </style>
         <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
@@ -42,16 +43,18 @@
              board.forEach((row)=>{
                html += '<div class = "row">'
                  row.forEach((block)=>{
+                    const bomClass = block.exploded? 'exploded block' : 'block';
                    const blockClass = block.opened ? 'opened block' : 'block';
                    const userName = block.user ? block.user : '';
-                //    const hasBom = block.exploded? 'block exploded' : 'block';
-                    html += `<div class = "${blockClass}">${userName}</div>`;
+                    html += `<div class = "${bomClass||blockClass}">${userName}</div>`;
                 
                  });
                html += '</div>' 
              });
 
             $('#app').html(html);
+          
+            
 
             $('.block').click(function() {
                 let a = $('.block').index(this);
@@ -63,19 +66,22 @@
                 user = "tom";
                
                 
+                
         // xとyを算出する
              $.getJSON('/board', {
               x: x,
               y: y,
               user: user,
               
+              
+             
              }, render);
          });
      };
          setInterval(() => {
           // 0.5秒ごとにサーバーにポーリング
          $.getJSON('/board', render);
-        }, 20000);
+        }, 5000);
 
         
 
