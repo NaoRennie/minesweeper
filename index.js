@@ -36,7 +36,7 @@ let directions = [
  let m = 1
  while (m< bomCount) {
     var x = Math.floor(Math.random() * width);
-    var y= Math.floor(Math.random() * height);  
+    var y = Math.floor(Math.random() * height);  
      if (board[x][y]['hasBom'] === false) {
         board[x][y]['hasBom'] = true;
         m++;
@@ -49,9 +49,6 @@ let directions = [
      xboard = req.query.x;
      yboard = req.query.y;
      userName = req.query.user;
-     
-     console.log('ここから');
-     console.log(req);
      if(xboard){
         bomNumber = 0;
          if(board[yboard][xboard]['hasBom']===true){
@@ -66,7 +63,7 @@ let directions = [
              // アクセスした場所に爆弾があった
               exploded: true,
               opened: true, 
-             user:userName,
+              user:userName,
              }
          }else{
              let d = {
@@ -74,44 +71,36 @@ let directions = [
               opened: true,
               user: userName,
              }
-           board[yboard][xboard] = d;
+           board[yboard][xboard]=d;
            //周りの爆弾の数
              for(h=0; h<directions.length;h++){
              let n = Number(''+directions[h][0]+'');
              let m = Number(''+directions[h][1]+'');  
              let x = Number(''+xboard+'');
-             let y= Number(''+yboard+''); 
-              let o = y + n;
-             let p = x + m;
-                  if (o<0){
-                  o = 0;
-                  }
-                 if (p<0){
-                 p = 0;
-                 }
-                 if(o>height){
-                 o = height;
-                 }
-                 if(p>width){
-                 p = width;
-                 }
+             let y = Number(''+yboard+''); 
+             let o = y + m;
+             let p = x + n;
+                if (o===undefined||p===undefined){
 
-                 if (board[o][p]['hasBom']===true){
-                     if(board[o][p].bomNumber===undefined){
-                      console.log('koko');
-                      board[o][p].bomNumber=1;
-                    
-                      }else{
-                      console.log('dayo');
-                     let a = Number(board[o][p].bomNumber);
-                     board[o][p].bomNumber=a+1;
-                     }
-                 console.log('kore');
-                 console.log(bomNumber);          
-                 }      
-             }     
-         }
-        
+                }else{
+                       
+                    if (board[o][p]['hasBom']===true){
+                        if(board[y][x].bomNumber===undefined){
+                            board[y][x].bomNumber=1;
+                        
+                         }else{
+                        let a = Number(board[o][p].bomNumber);
+                        board[y][x].bomNumber=a+1;
+                        console.log('kokokokokokokokokoko')
+                        console.log(a);
+
+                        }
+                    }   
+                }
+
+                
+            } 
+        }
      }
      
    board1 = JSON.parse(JSON.stringify(board));
@@ -122,7 +111,7 @@ let directions = [
      }
 
      
-     res.json(board1); 
+     res.send(board1); 
      console.log(bom);
      console.log(board);
         

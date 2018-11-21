@@ -30,9 +30,38 @@
                 background :red;
             }
             .exploded{
-                background-image:url("img.png");
-                background :yellow;
+                background:url('img.png');
+                background-position-x: 77%;
+                background-size:280px;
+            }   
+            .num1{
+                background:url('img.png');
+                background-size:280px;
+
             }
+            .num2{
+                background:url('img.png');
+                background-position-x: 8%;
+                background-size:280px;
+
+            }
+            .num3{
+                background:url('img.png');
+                background-position-x: 16%;
+                background-size:280px;
+
+            }
+            .num4{
+                background:url('img.png');
+                background-position-x: 24%;
+                background-size:280px;
+
+            }
+
+
+                
+                /* background :yellow; */
+            
         </style>
         <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
         <script>
@@ -45,8 +74,13 @@
                  row.forEach((block)=>{
                     const bomClass = block.exploded? 'exploded block' : 'block';
                    const blockClass = block.opened ? 'opened block' : 'block';
+                   const bomNumber1 = block.bomNumber===1? 'num1 block' : 'block';
+                   const bomNumber2 = block.bomNumber===2? 'num2 block' : 'block';
+                   const bomNumber3 = block.bomNumber===3? 'num3 block' : 'block';
+                   const bomNumber4 = block.bomNumber===4? 'num4 block' : 'block';
+                   
                    const userName = block.user ? block.user : '';
-                    html += `<div class = "${bomClass||blockClass}">${userName}</div>`;
+                    html += `<div class = "${bomClass} ${blockClass} ${bomNumber1} ${bomNumber2} ${bomNumber3} ${bomNumber4}">${userName}</div>`;
                 
                  });
                html += '</div>' 
