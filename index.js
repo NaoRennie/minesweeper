@@ -10,6 +10,7 @@ let xboard ;
 let yboard ;
 let userName ;
 let bom = [];
+let bomNum;
 let directions = [
     [0,-1],
     [1,0],
@@ -27,6 +28,7 @@ let directions = [
          arr[x] = {
             hasBom: false,
             opened: false,
+            
           };
      }    
      board[y] = arr;   
@@ -73,32 +75,31 @@ let directions = [
              }
            board[yboard][xboard]=d;
            //周りの爆弾の数
-             for(h=0; h<directions.length;h++){
+            h = 0
+            bomNum=0
+             while(h <8){
              let n = Number(''+directions[h][0]+'');
              let m = Number(''+directions[h][1]+'');  
              let x = Number(''+xboard+'');
              let y = Number(''+yboard+''); 
              let o = y + m;
              let p = x + n;
-                if (o===undefined||p===undefined){
-
-                }else{
-                       
+                if (o===false||p===false){
+                    console.log('TTTTTTTT');
+                   return;
+                }else{   
                     if (board[o][p]['hasBom']===true){
-                        if(board[y][x].bomNumber===undefined){
-                            board[y][x].bomNumber=1;
-                        
+                        if(bomNum>0){
+                            bomNum = bomNum+1;
+                            board[y][x]['bomNumber'] = bomNum;
                          }else{
-                        let a = Number(board[o][p].bomNumber);
-                        board[y][x].bomNumber=a+1;
-                        console.log('kokokokokokokokokoko')
-                        console.log(a);
-
+                            bomNum=1;
+                            board[y][x]['bomNumber'] = bomNum;
                         }
                     }   
+ 
                 }
-
-                
+             h++
             } 
         }
      }
@@ -112,8 +113,8 @@ let directions = [
 
      
      res.send(board1); 
-     console.log(bom);
-     console.log(board);
+    //  console.log(bom);
+    //  console.log(board);
         
 });
 
