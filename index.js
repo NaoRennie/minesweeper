@@ -84,12 +84,12 @@ let directions = [
              let y = Number(''+yboard+''); 
              let o = y + m;
              let p = x + n;
-                if (o===false||p===false){
+                if (o === false||p === false){
                     console.log('TTTTTTTT');
                    return;
                 }else{   
                     if (board[o][p]['hasBom']===true){
-                        if(bomNum>0){
+                        if(board[y][x]['bomNumber']>0){
                             bomNum = bomNum+1;
                             board[y][x]['bomNumber'] = bomNum;
                          }else{
@@ -114,7 +114,7 @@ let directions = [
      
      res.send(board1); 
     //  console.log(bom);
-    //  console.log(board);
+     console.log(board);
         
 });
 

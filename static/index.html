@@ -4,6 +4,10 @@
         <meta charset="UTF-8">
     </head>
     <body>
+        <!-- <form action="localhost:8000/board" method="post">
+            <p>お名前：<input type="text" name="user" value="user" size="20" /></p>
+            <p><input type="submit" name="submit" value="送信" /></p>
+        </form> -->
         <div id="app"></div>
         <style>
             *{
@@ -55,11 +59,8 @@
                 background:url('img.png');
                 background-position-x: 24%;
                 background-size:280px;
-
             }
-
-
-                
+   
                 /* background :yellow; */
             
         </style>
@@ -97,18 +98,15 @@
                 let row = Math.floor(a/10);
                 x = col;
                 y = row;
-                user = "tom";
-               
-                
+                user = "k";
+            
                 
         // xとyを算出する
              $.getJSON('/board', {
               x: x,
               y: y,
               user: user,
-              
-              
-             
+  
              }, render);
          });
      };
@@ -117,7 +115,6 @@
          $.getJSON('/board', render);
         }, 5000);
 
-        
 
         </script>
     </body>
