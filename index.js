@@ -1,3 +1,4 @@
+
 const express = require('express');
 const app = express();
 app.use(express.static('static')); 
@@ -10,7 +11,6 @@ let xboard ;
 let yboard ;
 let userName ;
 let bom = [];
-let bomNum;
 let directions = [
     [0,-1],
     [1,0],
@@ -36,30 +36,29 @@ let directions = [
 
  //bombの位置
  let m = 1
- while (m< bomCount) {
+ 
+ while (m < bomCount) {
     var x = Math.floor(Math.random() * width);
     var y = Math.floor(Math.random() * height);  
-     if (board[x][y]['hasBom'] === false) {
-        board[x][y]['hasBom'] = true;
+     if (board[x][y].hasBom === false) {
+        board[x][y].hasBom = true;
         m++;
         bom.push({x:x,y:y})     
      }    
  }
 
  app.get('/board',(req,res)=>{
-
      xboard = req.query.x;
      yboard = req.query.y;
      userName = req.query.user;
      if(xboard){
-        bomNumber = 0;
-         if(board[yboard][xboard]['hasBom']===true){
+         if(board[yboard][xboard].hasBom===true){
              for(i=0; i<bom.length; i++){
-                 board[bom[i]['y']][bom[i]['x']]={ 
-                // 他のミスで誘爆した
-                exploded: true,
-                opened: false, 
-                }
+                 board[bom[i].y][bom[i].x]={ 
+                 // 他のミスで誘爆した
+                 exploded: true,
+                 opened: false, 
+                 }
              }
              board[yboard][xboard]={
              // アクセスした場所に爆弾があった
@@ -68,37 +67,32 @@ let directions = [
               user:userName,
              }
          }else{
-             let d = {
+             board[yboard][xboard]={
               hasBom: false,
               opened: true,
               user: userName,
-             }
-           board[yboard][xboard]=d;
-           //周りの爆弾の数
-            h = 0
-            bomNum=0
-             while(h <8){
-             let n = Number(''+directions[h][0]+'');
-             let m = Number(''+directions[h][1]+'');  
-             let x = Number(''+xboard+'');
-             let y = Number(''+yboard+''); 
+              };
+             //周りの爆弾の数
+             h = 0
+             bomNum = 0
+             while(h < 8){
+             let n = Number(directions[h][0]);
+             let m = Number(directions[h][1]);  
+             let x = Number(xboard);
+             let y = Number(yboard); 
              let o = y + m;
              let p = x + n;
-                if (o === false||p === false){
-                    console.log('TTTTTTTT');
-                   return;
-                }else{   
-                    if (board[o][p]['hasBom']===true){
-                        if(board[y][x]['bomNumber']>0){
-                            bomNum = bomNum+1;
-                            board[y][x]['bomNumber'] = bomNum;
-                         }else{
-                            bomNum=1;
-                            board[y][x]['bomNumber'] = bomNum;
-                        }
+                if (board[o]===undefined||board[o]>height||board[p]===undefined||board[p]>width){
+                    console.log('TTTTT');
+                }else {
+                   
+                    if (board[o][p].hasBom ===true){
+                        bomNum = bomNum+1;
+                            board[y][x].bomNumber = bomNum;
                     }   
  
                 }
+   
              h++
             } 
         }
@@ -107,7 +101,7 @@ let directions = [
    board1 = JSON.parse(JSON.stringify(board));
    for (let y=0; y<height; y++){ 
         for(let x=0; x<width; x++){
-           delete board1[y][x]['hasBom'];
+           delete board1[y][x].hasBom;
          }    
      }
 
